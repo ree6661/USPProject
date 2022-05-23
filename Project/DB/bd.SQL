@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
 --
--- Host: localhost    Database: phonebd
+-- Host: 127.0.0.1    Database: phonedb
 -- ------------------------------------------------------
 -- Server version	8.0.28
 
@@ -14,6 +14,30 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `ram`
+--
+
+DROP TABLE IF EXISTS `ram`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ram` (
+  `idRAM` int unsigned NOT NULL AUTO_INCREMENT,
+  `размер` varchar(45) NOT NULL,
+  PRIMARY KEY (`idRAM`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ram`
+--
+
+LOCK TABLES `ram` WRITE;
+/*!40000 ALTER TABLE `ram` DISABLE KEYS */;
+INSERT INTO `ram` VALUES (1,'2Gb'),(2,'4Gb'),(3,'8Gb');
+/*!40000 ALTER TABLE `ram` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `галерия`
@@ -31,7 +55,7 @@ CREATE TABLE `галерия` (
   KEY `idСнимка_idx` (`idСнимка`),
   CONSTRAINT `idМодели` FOREIGN KEY (`idМодели`) REFERENCES `модели` (`idМодели`),
   CONSTRAINT `idСнимка` FOREIGN KEY (`idСнимка`) REFERENCES `снимка` (`idСнимка`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,6 +64,7 @@ CREATE TABLE `галерия` (
 
 LOCK TABLES `галерия` WRITE;
 /*!40000 ALTER TABLE `галерия` DISABLE KEYS */;
+INSERT INTO `галерия` VALUES (1,1,1),(2,1,5),(3,1,2),(4,2,3),(5,1,4),(6,1,6);
 /*!40000 ALTER TABLE `галерия` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,7 +168,7 @@ CREATE TABLE `модели` (
   KEY `idОперативна памет _idx` (`idОперативна памет`),
   KEY `idСторидж_idx` (`idСторидж`),
   CONSTRAINT `idМарка` FOREIGN KEY (`idМарки`) REFERENCES `марки` (`idМарки`),
-  CONSTRAINT `idОперативна памет ` FOREIGN KEY (`idОперативна памет`) REFERENCES `оперативна памет` (`idОперативна памет`),
+  CONSTRAINT `idОперативна памет ` FOREIGN KEY (`idОперативна памет`) REFERENCES `ram` (`idRAM`),
   CONSTRAINT `idПроцесор` FOREIGN KEY (`idПроцесор`) REFERENCES `процесор` (`idПроцесор`),
   CONSTRAINT `idСторидж` FOREIGN KEY (`idСторидж`) REFERENCES `сторидж` (`idСторидж`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
@@ -157,30 +182,6 @@ LOCK TABLES `модели` WRITE;
 /*!40000 ALTER TABLE `модели` DISABLE KEYS */;
 INSERT INTO `модели` VALUES (1,8,4,1,3,2,'Galaxy S21',''),(2,7,3,2,2,3,'Legion',NULL),(3,6,3,1,2,3,'Redmi 9',NULL),(4,6,4,1,1,2,'Redmi 10',NULL);
 /*!40000 ALTER TABLE `модели` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `оперативна памет`
---
-
-DROP TABLE IF EXISTS `оперативна памет`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `оперативна памет` (
-  `idОперативна памет` int unsigned NOT NULL AUTO_INCREMENT,
-  `Оперативна памет` varchar(45) NOT NULL,
-  PRIMARY KEY (`idОперативна памет`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `оперативна памет`
---
-
-LOCK TABLES `оперативна памет` WRITE;
-/*!40000 ALTER TABLE `оперативна памет` DISABLE KEYS */;
-INSERT INTO `оперативна памет` VALUES (1,'2Gb'),(2,'4Gb'),(3,'8Gb');
-/*!40000 ALTER TABLE `оперативна памет` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -242,7 +243,7 @@ CREATE TABLE `снимка` (
   `idСнимка` int unsigned NOT NULL AUTO_INCREMENT,
   `Път` varchar(50) NOT NULL,
   PRIMARY KEY (`idСнимка`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -251,6 +252,7 @@ CREATE TABLE `снимка` (
 
 LOCK TABLES `снимка` WRITE;
 /*!40000 ALTER TABLE `снимка` DISABLE KEYS */;
+INSERT INTO `снимка` VALUES (1,'Galaxy_S21_0.jpg'),(2,'Galaxy_S21_1.jpg'),(3,'Legion_0.jpg'),(4,'Galaxy_S21_3.jpg'),(5,'Galaxy_S21_4.jpg'),(6,'Galaxy_S21_5.jpg');
 /*!40000 ALTER TABLE `снимка` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -287,4 +289,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-22 18:59:24
+-- Dump completed on 2022-05-23  7:55:24
