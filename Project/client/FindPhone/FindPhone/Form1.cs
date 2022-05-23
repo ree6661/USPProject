@@ -14,29 +14,48 @@ namespace FindPhone
     public partial class Form1 : Form
     {
         UInt16 page, pages;
+        public List<PictureBox> pics = new List<PictureBox>();
         public Form1()
         {
             InitializeComponent();
             InitializeSEngine();
             InitializeResults();
-  
+
+            pics.Add(pictureBox1);
+            pics.Add(pictureBox2);
+            pics.Add(pictureBox3);
+
+            pictureBox1 = new PictureBox();
+            pictureBox2 = new PictureBox();
+            pictureBox3 = new PictureBox();
+
             pout();
         }
-
+        public void pagesUpdate()
+        {
+            pages = (UInt16)(phones.Count / 3 + Convert.ToUInt16(phones.Count % 3 != 0));
+            page = 1;
+            previousBtn.Enabled = false;
+            nextBtn.Enabled = page < pages;
+            pageLable.Text = page.ToString();
+            pagesLabel.Text = pages.ToString();
+        }
         public class Model
         {
             public UInt32 modelId, BrandId, CPUId, OSId, RAMId, ROMId;
-            public string name = null, description= null;
+            public string name = null, description= "N/A";
         }
         public class Phone
         {
             public Model model;
-            public string Brand, CPU, OS, RAM, ROM;
+            public string Brand, CPU, OS, RAM, ROM,frontCams,backCams;
             public List<string> photos = new List<string>();
 
             public Phone(Model model)
             {
                 this.model = model;
+                frontCams = "";
+                backCams = "";
             }
 
             public UInt32 getBrandid()
@@ -235,14 +254,43 @@ namespace FindPhone
                     if (!phones[i].photos.Any())
                         phones[i].photos.Add(("default.jpg"));
                     reader.Close();
-                }
-            pages = (UInt16)(phones.Count / 3 + Convert.ToUInt16(phones.Count % 3 != 0));
-            page = 1;
-            previousBtn.Enabled = false;
-            nextBtn.Enabled = page < pages;
-            pageLable.Text = page.ToString();
-            pagesLabel.Text = pages.ToString();
 
+                   //get front cams
+                   query = "SELECT COUNT(*) , Мегапиксели AS count " +
+                           "FROM мегапиксели JOIN камери ON камери.idМегапиксели = мегапиксели.idМегапиксели " +
+                           "WHERE камери.idМодели=@modelId AND камери.Предна=1 " +
+                           "GROUP BY Мегапиксели";
+                
+                command = new MySqlCommand(query, conn.conn);
+                command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
+
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    phones[i].frontCams+=reader.GetString("COUNT(*)") + "x";
+                    phones[i].frontCams += reader.GetString("count") + " ";
+                }
+                if (phones[i].frontCams == "") phones[i].frontCams = "N/A";
+                reader.Close();
+                //get back cams
+                query = "SELECT COUNT(*) , Мегапиксели AS count " +
+                           "FROM мегапиксели JOIN камери ON камери.idМегапиксели = мегапиксели.idМегапиксели " +
+                           "WHERE камери.idМодели=@modelId AND камери.Предна=0 " +
+                           "GROUP BY Мегапиксели";
+
+                command = new MySqlCommand(query, conn.conn);
+                command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
+
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    phones[i].backCams += reader.GetString("COUNT(*)") + "x";
+                    phones[i].backCams += reader.GetString("count") + " ";
+                }
+                if (phones[i].backCams == "") phones[i].backCams = "N/A";
+                reader.Close();
+            }
+            pagesUpdate();
             conn.close();
            /* }
             catch
@@ -251,19 +299,25 @@ namespace FindPhone
                                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }*/
         }
-
+        public string getDsc(Phone phone)
+        {
+            return "Смартфон :" +
+                        phone.Brand + " " +
+                        phone.model.name +
+                        "\n Предни камери " + phone.frontCams +
+                        "\n Задни камери " + phone.backCams +
+                        "\n Процесор " +
+                        phone.CPU +
+                        "\n Операционна Система " + phone.OS +
+                        "\n RAM памет " + phone.RAM +
+                        "\n Сторидж " + phone.ROM +
+                        "\n Описание " + phone.model.description;
+        }
         public void pout()
         {
 
 
-            List<PictureBox> pics = new List<PictureBox>();
-            pics.Add(pictureBox1);
-            pics.Add(pictureBox2);
-            pics.Add(pictureBox3);
 
-            pictureBox1 = new PictureBox();
-            pictureBox2 = new PictureBox();
-            pictureBox3 = new PictureBox();
 
             List<RichTextBox> text = new List<RichTextBox>();
             text.Add(richTextBox1);
@@ -272,27 +326,24 @@ namespace FindPhone
 
             for (int i = 0; i < 3; ++i)
             {
-                if((i + (3 * (page - 1)))<phones.Count)
+                if ((i + (3 * (page - 1)))<phones.Count)
                 {
                     pics[i].Visible = true;
                     text[i].Visible = true;
                     //MessageBox.Show(@"photos\" + phones[(i + (3 * (page - 1)))].photos[0]+"\ti= "+i.ToString()+"\ti2= "+(i + (3 * (page - 1))).ToString(), "ГРЕШКА",MessageBoxButtons.OK);
-                    pics[i].ImageLocation = @"photos\"  + phones[(i + (3 * (page - 1)))].photos[0];
+                    pics[i].Load(@"photos\"  + phones[(i + (3 * (page - 1)))].photos[0]);
                     pics[i].SizeMode = PictureBoxSizeMode.StretchImage;
-                    text[i].Text = "Смартфон :" +
-                        phones[i + (3 * (page - 1))].Brand + " " +
-                        phones[i + (3 * (page - 1))].model.name +
-                        "\n Процесор " +
-                        phones[i + (3 * (page - 1))].CPU + 
-                        "\n Операционна Система " + phones[i + (3 * (page - 1))].OS +
-                        "\n RAM памет " + phones[i + (3 * (page - 1))].RAM +
-                        "\n Сторидж " + phones[i + (3 * (page - 1))].ROM;
+                    text[i].Text = getDsc(phones[(i + (3 * (page - 1)))]);
                 }
                 else
                 {
+                    //pics[i].Load();
                     pics[i].Visible = false;
-                    text[i].Visible = false;
+                    text[i].Visible = false;    
                 }
+                            pics.Add(pictureBox1);
+            pics.Add(pictureBox2);
+            pics.Add(pictureBox3);
             }
 
             pictureBox1.ImageLocation = @"Image\1.jpg";
@@ -368,6 +419,7 @@ namespace FindPhone
         {
             if(page<pages)
             {
+
                 ++page;
                 nextBtn.Enabled = page<pages;
                 previousBtn.Enabled = true;
@@ -378,11 +430,10 @@ namespace FindPhone
 
         private void previousBtn_Click(object sender, EventArgs e)
         {
-            if (page > 0)
+            if (page > 1)
             {
-                --page;
                 nextBtn.Enabled = true;
-                previousBtn.Enabled = page > 0;
+                previousBtn.Enabled = --page > 1;
                 pout();
             }
             else nextBtn.Enabled = false;
@@ -390,7 +441,16 @@ namespace FindPhone
 
         private void searchBtn_Click(object sender, EventArgs e)
         {
-            
+            string queryType = "SELECT ", tables = "", where = "";
+            if (modelCBox.SelectedItem != "всички")
+                where = "WHERE модели.Модел = " + modelCBox.SelectedItem; 
+            else    if (BrandCBox.SelectedItem != "всички") where = "WHERE марки.Марки = " + BrandCBox.SelectedItem;
+
+            if (cameraCBox.SelectedItem != "всички" && where=="")
+                where = "WHERE мегапиксели.Мегапиксели = " + cameraCBox.SelectedItem;
+            else if(cameraCBox.SelectedItem != "всички")
+                where += "AND мегапиксели.Мегапиксели = " + cameraCBox.SelectedItem;
+
         }
     }
 }
