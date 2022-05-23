@@ -78,14 +78,14 @@ DROP TABLE IF EXISTS `камери`;
 CREATE TABLE `камери` (
   `idКамери` int unsigned NOT NULL AUTO_INCREMENT,
   `idМодели` int unsigned NOT NULL,
-  `Предна камера` tinyint unsigned NOT NULL,
+  `Предна` tinyint unsigned NOT NULL,
   `idМегапиксели` int unsigned NOT NULL,
   PRIMARY KEY (`idКамери`),
   KEY `idМодели_idx` (`idМодели`),
   KEY `idМегапиксели_idx` (`idМегапиксели`),
   CONSTRAINT `idМегапиксели` FOREIGN KEY (`idМегапиксели`) REFERENCES `мегапиксели` (`idМегапиксели`),
   CONSTRAINT `idМоделии` FOREIGN KEY (`idМодели`) REFERENCES `модели` (`idМодели`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,7 +94,7 @@ CREATE TABLE `камери` (
 
 LOCK TABLES `камери` WRITE;
 /*!40000 ALTER TABLE `камери` DISABLE KEYS */;
-INSERT INTO `камери` VALUES (1,1,0,1),(2,2,1,2),(3,3,0,1),(4,1,1,3),(5,4,1,3),(6,2,0,3);
+INSERT INTO `камери` VALUES (1,1,0,1),(2,2,1,2),(3,3,0,1),(4,1,1,3),(5,4,1,3),(6,2,0,3),(7,2,0,3),(8,1,0,1),(9,1,0,1),(10,1,0,3),(11,1,0,1),(12,1,0,2);
 /*!40000 ALTER TABLE `камери` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,7 +171,7 @@ CREATE TABLE `модели` (
   CONSTRAINT `idОперативна памет ` FOREIGN KEY (`idОперативна памет`) REFERENCES `ram` (`idRAM`),
   CONSTRAINT `idПроцесор` FOREIGN KEY (`idПроцесор`) REFERENCES `процесор` (`idПроцесор`),
   CONSTRAINT `idСторидж` FOREIGN KEY (`idСторидж`) REFERENCES `сторидж` (`idСторидж`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `модели` (
 
 LOCK TABLES `модели` WRITE;
 /*!40000 ALTER TABLE `модели` DISABLE KEYS */;
-INSERT INTO `модели` VALUES (1,8,4,1,3,2,'Galaxy S21',''),(2,7,3,2,2,3,'Legion',NULL),(3,6,3,1,2,3,'Redmi 9',NULL),(4,6,4,1,1,2,'Redmi 10',NULL);
+INSERT INTO `модели` VALUES (1,8,4,1,3,2,'','Galaxy S21 е фотин телефон'),(2,7,3,2,2,3,'Legion',NULL),(3,6,3,1,2,3,'Redmi 9',NULL),(4,6,4,1,1,2,'Redmi 10',NULL),(11,6,3,1,2,3,'Remi 10 S',NULL),(12,7,3,1,3,3,'Legion SX','aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaaaaaaaaaaaaaaaaaaaaaaaaaaxddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr'),(13,8,4,1,3,1,'Galaxy M21',NULL);
 /*!40000 ALTER TABLE `модели` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -289,4 +289,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-23  7:55:24
+-- Dump completed on 2022-05-23 16:57:30
