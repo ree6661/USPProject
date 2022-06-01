@@ -332,15 +332,15 @@ namespace FindPhone
                 phones.Add(phone);
             }
             reader.Close();
-            //get photos
 
+            //get photos
             query = "SELECT DISTINCT Път FROM снимка JOIN галерия ON снимка.idСнимка = галерия.idСнимка where галерия.idМодели = @modelId ;";
             command = new MySqlCommand(query, conn.conn);
 
             for (int i = 0; i < phones.Count; ++i)
             {
                 if(searchBox.Text != "")
-                    if(!(Regex.IsMatch(getDsc(phones[i]), searchBox.Text)))
+                    if(!(Regex.IsMatch(getDsc(phones[i]).ToLower(), searchBox.Text.ToLower())))
                     {
                         phones.RemoveAt(i);
                         --i;
