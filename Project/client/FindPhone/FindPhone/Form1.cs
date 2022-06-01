@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace FindPhone
@@ -338,7 +339,14 @@ namespace FindPhone
 
             for (int i = 0; i < phones.Count; ++i)
             {
-                command.Parameters.Clear();
+                if(searchBox.Text != "")
+                    if(!(Regex.IsMatch(getDsc(phones[i]), searchBox.Text)))
+                    {
+                        phones.RemoveAt(i);
+                        --i;
+                        continue;
+                    }
+            command.Parameters.Clear();
                 command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
                 reader.Close();
                 reader = command.ExecuteReader();
