@@ -363,7 +363,7 @@ namespace FindPhone
                     "SUM(if(камери.Предна=0 , 1, 0)) AS брой_задни, Мегапиксели " +
                     "FROM мегапиксели JOIN камери " +
                     "ON камери.idМегапиксели = мегапиксели.idМегапиксели " +
-                    "WHERE камери.idМодели=1 GROUP BY Мегапиксели";
+                    "WHERE камери.idМодели=@modelId GROUP BY Мегапиксели";
 
             command = new MySqlCommand(query, conn.conn);
             for (int i = 0; i < phones.Count; ++i)
