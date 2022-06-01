@@ -14,8 +14,7 @@ namespace FindPhone
         {
             InitializeComponent();
             InitializeSEngine();
-            InitializeResults();
-
+            find();
             pics.Add(pictureBox1);
             pics.Add(pictureBox2);
             pics.Add(pictureBox3);
@@ -29,6 +28,7 @@ namespace FindPhone
         public void pagesUpdate()
         {
             pages = (UInt16)(phones.Count / 3 + Convert.ToUInt16(phones.Count % 3 != 0));
+            pages += Convert.ToUInt16(pages == 0);
             page = 1;
             previousBtn.Enabled = false;
             nextBtn.Enabled = page < pages;
@@ -43,9 +43,13 @@ namespace FindPhone
         public class Phone
         {
             public Model model;
-            public string Brand, CPU, OS, RAM, ROM, frontCams, backCams;
+            public string Brand = "N/A", CPU = "N/A", OS = "N/A", RAM = "N/A", ROM = "N/A", frontCams = "", backCams = "";
             public List<string> photos = new List<string>();
 
+            public Phone() 
+            {
+                model=new Model();
+            }
             public Phone(Model model)
             {
                 this.model = model;
@@ -113,187 +117,6 @@ namespace FindPhone
                                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        public void InitializeResults()
-        {
-
-            // try
-            // {
-            //connection to Data Base
-            DBConnection conn = new DBConnection();
-            conn.open();
-            //get phones
-
-            string query = "SELECT * FROM модели";
-
-            MySqlCommand command = new MySqlCommand(query, conn.conn);
-
-            MySqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                Model model = new Model();
-                model.modelId = reader.GetUInt32("idМодели");
-                model.BrandId = reader.GetUInt32("idМарки");
-                model.CPUId = reader.GetUInt32("idПроцесор");
-                model.OSId = reader.GetUInt32("idОС");
-                model.RAMId = reader.GetUInt32("idОперативна памет");
-                model.ROMId = reader.GetUInt32("idСторидж");
-                model.name = reader.GetString("Модел");
-                try
-                {
-                    model.description = reader.GetString("Описание");
-                }
-                catch
-                {
-                    //MessageBox.Show("ГРЕШКА: " + model.name.ToString() + " has no description", "ГРЕШКА",
-                    //                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    model.description = "N/A";
-                }
-                phones.Add(new Phone(model));
-            }
-            reader.Close();
-            //get other phone data
-
-            for (int i = 0; i < phones.Count; ++i)
-            {
-                //get phone Brand
-                query = "SELECT Марки FROM марки WHERE idМарки=@BrandId ;";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@BrandId", MySqlDbType.UInt32).Value = phones[i].getBrandid();
-
-                reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    try { phones[i].Brand = reader.GetString("Марки"); }
-                    catch { phones[i].Brand = "N/A"; }
-                }
-                else phones[i].Brand = "N/A";
-
-
-
-                reader.Close();
-
-                //get phone CPU
-                query = "SELECT Процесор FROM процесор WHERE idПроцесор=@CPUId ;";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@CPUId", MySqlDbType.UInt32).Value = phones[i].getCPUId();
-
-                reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    try { phones[i].CPU = reader.GetString("Процесор"); }
-                    catch { phones[i].CPU = "N/A"; }
-                }
-                else phones[i].CPU = "N/A";
-
-                reader.Close();
-                //get phone OS
-                query = "SELECT ОС FROM ос WHERE idОС=@OSId ;";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@OSId", MySqlDbType.UInt32).Value = phones[i].getOSId();
-                reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    try { phones[i].OS = reader.GetString("ОС"); }
-                    catch { phones[i].OS = "N/A"; }
-                }
-                else phones[i].OS = "N/A";
-
-                reader.Close();
-                //get phone RAM
-                query = "SELECT размер FROM ram WHERE idRam = @RAMId ;";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@RAMId", MySqlDbType.UInt32).Value = phones[i].getRAMId();
-
-                reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    try { phones[i].RAM = reader.GetString("размер"); }
-                    catch { phones[i].RAM = "N/A"; }
-                }
-                else phones[i].RAM = "N/A";
-
-
-                reader.Close();
-                //get phone ROM
-                query = "SELECT Размер FROM сторидж WHERE idСторидж = @ROMId ";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@ROMId", MySqlDbType.UInt32).Value = phones[i].getROMId();
-
-                reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    try { phones[i].ROM = reader.GetString("Размер"); }
-                    catch { phones[i].ROM = "N/A"; }
-                }
-                else phones[i].ROM = "N/A";
-
-                reader.Close();
-                //get photos
-
-                query = "SELECT DISTINCT Път FROM снимка JOIN галерия ON снимка.idСнимка = галерия.idСнимка where галерия.idМодели = @modelId ;";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
-
-                reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    phones[i].photos.Add(reader.GetString("Път"));
-                }
-                if (!phones[i].photos.Any())
-                    phones[i].photos.Add(("default.jpg"));
-                reader.Close();
-
-                //get front cams
-                query = "SELECT COUNT(*) , Мегапиксели AS count " +
-                        "FROM мегапиксели JOIN камери ON камери.idМегапиксели = мегапиксели.idМегапиксели " +
-                        "WHERE камери.idМодели=@modelId AND камери.Предна=1 " +
-                        "GROUP BY Мегапиксели";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
-
-                reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    phones[i].frontCams += reader.GetString("COUNT(*)") + "x";
-                    phones[i].frontCams += reader.GetString("count") + " ";
-                }
-                if (phones[i].frontCams == "") phones[i].frontCams = "N/A";
-                reader.Close();
-                //get back cams
-                query = "SELECT COUNT(*) , Мегапиксели AS count " +
-                           "FROM мегапиксели JOIN камери ON камери.idМегапиксели = мегапиксели.idМегапиксели " +
-                           "WHERE камери.idМодели=@modelId AND камери.Предна=0 " +
-                           "GROUP BY Мегапиксели";
-
-                command = new MySqlCommand(query, conn.conn);
-                command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
-
-                reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    phones[i].backCams += reader.GetString("COUNT(*)") + "x";
-                    phones[i].backCams += reader.GetString("count") + " ";
-                }
-                if (phones[i].backCams == "") phones[i].backCams = "N/A";
-                reader.Close();
-            }
-            pagesUpdate();
-            conn.close();
-            /* }
-             catch
-             {
-                 MessageBox.Show("ГРЕШКА: InitializeResults() се счупи", "ГРЕШКА",
-                                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
-             }*/
-        }
         public string getDsc(Phone phone)
         {
             return "Смартфон :" +
@@ -310,15 +133,11 @@ namespace FindPhone
         }
         public void pout()
         {
-
-
-
-
             List<RichTextBox> text = new List<RichTextBox>();
             text.Add(richTextBox1);
             text.Add(richTextBox2);
             text.Add(richTextBox3);
-
+            
             for (int i = 0; i < 3; ++i)
             {
                 if ((i + (3 * (page - 1))) < phones.Count)
@@ -435,19 +254,138 @@ namespace FindPhone
             }
             else nextBtn.Enabled = false;
         }
+        public void find() 
+        {
+            phones.Clear();
+            string query = "SELECT марки.idМарки ,марки.Марки," +
+                                "модели.idМодели, модели.Модел,модели.Описание," +
+                                "процесор.idПроцесор,процесор.Процесор," +
+                                "ос.idОС,ос.ОС,ram.idRAM,ram.RAM," +
+                                "сторидж.idСторидж,сторидж.размер " +
+                                "FROM phonedb.модели " +
+                                "JOIN phonedb.марки ON марки.idМарки = модели.idМарки " +
+                                "JOIN phonedb.процесор ON процесор.idПроцесор = модели.idПроцесор " +
+                                "JOIN phonedb.ос ON ос.idОС = модели.idОС " +
+                                "JOIN phonedb.ram ON ram.idRAM = модели.idRAM " +
+                                "JOIN phonedb.сторидж ON сторидж.idСторидж = модели.idСторидж ",
+                 brand = "",model = "", camera = "";
 
+            if (cameraCBox.SelectedItem != "всички")
+                query += "JOIN phonedb.камери ON камери.idМодели=модели.idМодели  " +
+                            "JOIN phonedb.мегапиксели ON мегапиксели.idМегапиксели=камери.idМегапиксели ";
+
+                if (modelCBox.SelectedItem != "всички")
+                model = " WHERE модели.Модел = @Model";
+            else if (BrandCBox.SelectedItem != "всички") 
+                brand = " WHERE марки.Марки = @Brand";
+
+            if (cameraCBox.SelectedItem != "всички")
+            {
+                if (brand == "" || model == "") camera = " AND ";
+                else camera = " WHERE ";
+                camera += "мегапиксели.Мегапиксели = @Camera GROUP BY модели.idМодели";
+            }
+
+            query += model + brand + camera + " ORDER BY модели.idМодели";
+
+            //connection to Data Base
+            DBConnection conn = new DBConnection();
+            conn.open();
+
+            MySqlCommand command = new MySqlCommand(query, conn.conn);
+            
+            command.Parameters.Add("@Brand", MySqlDbType.VarChar, 45).Value = BrandCBox.Text;
+            command.Parameters.Add("@Model", MySqlDbType.VarChar, 45).Value = modelCBox.Text;
+            command.Parameters.Add("@Camera", MySqlDbType.VarChar, 45).Value = cameraCBox.Text;
+
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Phone phone = new Phone();
+                phone.model.modelId = reader.GetUInt32("idМодели");
+                phone.model.BrandId = reader.GetUInt32("idМарки");
+                phone.model.CPUId = reader.GetUInt32("idПроцесор");
+                phone.model.OSId = reader.GetUInt32("idОС");
+                phone.model.RAMId = reader.GetUInt32("idRAM"); 
+
+                phone.model.ROMId = reader.GetUInt32("idСторидж");
+                phone.model.name = reader.GetString("Модел");
+                /*MessageBox.Show(phone.model.name +"\t"+ phone.model.modelId.ToString(), 
+                                "addet", MessageBoxButtons.OK);*/
+                try
+                {
+                    phone.model.description = reader.GetString("Описание");
+                }
+                catch
+                {
+                    phone.model.description = "N/A";
+                }
+                /*MessageBox.Show(phone.model.description,
+            "dc", MessageBoxButtons.OK);*/
+                try { phone.Brand = reader.GetString("Марки"); }
+                catch { phone.Brand = "N/A"; }
+                try { phone.CPU = reader.GetString("Процесор"); }
+                catch { phone.CPU = "N/A"; }
+                try { phone.OS = reader.GetString("ОС"); }
+                catch { phone.OS = "N/A"; }
+                try { phone.RAM = reader.GetString("RAM"); }
+                catch { phone.RAM = "N/A"; }
+                try { phone.ROM = reader.GetString("Размер"); }
+                catch { phone.ROM = "N/A"; }
+                phones.Add(phone);
+            }
+            reader.Close();
+            //get photos
+
+            query = "SELECT DISTINCT Път FROM снимка JOIN галерия ON снимка.idСнимка = галерия.idСнимка where галерия.idМодели = @modelId ;";
+            command = new MySqlCommand(query, conn.conn);
+
+            for (int i = 0; i < phones.Count; ++i)
+            {
+                command.Parameters.Clear();
+                command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
+                reader.Close();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    phones[i].photos.Add(reader.GetString("Път"));
+                }
+                if (!phones[i].photos.Any())
+                    phones[i].photos.Add(("default.jpg"));
+            }
+            reader.Close();
+            //get cams
+            query = "SELECT SUM(if(камери.Предна=1 , 1, 0)) AS брой_предни ," +
+                    "SUM(if(камери.Предна=0 , 1, 0)) AS брой_задни, Мегапиксели " +
+                    "FROM мегапиксели JOIN камери " +
+                    "ON камери.idМегапиксели = мегапиксели.idМегапиксели " +
+                    "WHERE камери.idМодели=1 GROUP BY Мегапиксели";
+
+            command = new MySqlCommand(query, conn.conn);
+            for (int i = 0; i < phones.Count; ++i)
+            {
+                command.Parameters.Clear();
+                command.Parameters.Add("@modelId", MySqlDbType.UInt32).Value = phones[i].model.modelId;
+                reader.Close();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    string camMp = reader.GetString("Мегапиксели");
+                    int br = reader.GetInt32("брой_предни");
+                    if (br != 0) phones[i].frontCams += br.ToString() + "x" + camMp;
+                    br = reader.GetInt32("брой_задни");
+                    if (br != 0) phones[i].backCams += br.ToString() + "x" + camMp;
+                }
+            }
+            reader.Close();
+            pagesUpdate();
+            conn.close();
+        }
         private void searchBtn_Click(object sender, EventArgs e)
         {
-            string queryType = "SELECT ", tables = "", where = "";
-            if (modelCBox.SelectedItem != "всички")
-                where = "WHERE модели.Модел = " + modelCBox.SelectedItem;
-            else if (BrandCBox.SelectedItem != "всички") where = "WHERE марки.Марки = " + BrandCBox.SelectedItem;
-
-            if (cameraCBox.SelectedItem != "всички" && where == "")
-                where = "WHERE мегапиксели.Мегапиксели = " + cameraCBox.SelectedItem;
-            else if (cameraCBox.SelectedItem != "всички")
-                where += "AND мегапиксели.Мегапиксели = " + cameraCBox.SelectedItem;
-
+            find();
+            pout();
         }
     }
 }
