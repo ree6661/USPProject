@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.searchBox = new System.Windows.Forms.TextBox();
             this.BrandCBox = new System.Windows.Forms.ComboBox();
             this.modelCBox = new System.Windows.Forms.ComboBox();
@@ -90,6 +91,7 @@
             // 
             this.richTextBox1.Location = new System.Drawing.Point(201, 89);
             this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(1038, 167);
             this.richTextBox1.TabIndex = 5;
             this.richTextBox1.Text = "";
@@ -98,6 +100,7 @@
             // 
             this.richTextBox2.Location = new System.Drawing.Point(201, 262);
             this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.ReadOnly = true;
             this.richTextBox2.Size = new System.Drawing.Size(1038, 167);
             this.richTextBox2.TabIndex = 7;
             this.richTextBox2.Text = "";
@@ -115,6 +118,7 @@
             // 
             this.richTextBox3.Location = new System.Drawing.Point(201, 435);
             this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.ReadOnly = true;
             this.richTextBox3.Size = new System.Drawing.Size(1038, 167);
             this.richTextBox3.TabIndex = 9;
             this.richTextBox3.Text = "";
@@ -255,8 +259,9 @@
             this.Controls.Add(this.modelCBox);
             this.Controls.Add(this.BrandCBox);
             this.Controls.Add(this.searchBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Find  yor phone";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
