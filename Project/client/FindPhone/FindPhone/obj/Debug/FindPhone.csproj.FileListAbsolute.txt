@@ -78,3 +78,4 @@ E:\uspProject\USPProject\Project\client\FindPhone\FindPhone\obj\Debug\FindPhone.
 E:\uspProject\USPProject\Project\client\FindPhone\FindPhone\obj\Debug\FindPhone.csproj.CopyComplete
 E:\uspProject\USPProject\Project\client\FindPhone\FindPhone\obj\Debug\FindPhone.exe
 E:\uspProject\USPProject\Project\client\FindPhone\FindPhone\obj\Debug\FindPhone.pdb
+E:\uspProject\USPProject\Project\client\FindPhone\FindPhone\obj\Debug\FindPhone.Galery.resources

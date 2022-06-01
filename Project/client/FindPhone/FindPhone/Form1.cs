@@ -141,13 +141,13 @@ namespace FindPhone
             
             for (int i = 0; i < 3; ++i)
             {
-                if ((i + (3 * (page - 1))) < phones.Count)
+                if (elementIndex(i) < phones.Count)
                 {
                     pics[i].Visible = true;
                     text[i].Visible = true;
-                    pics[i].Load(@"photos\" + phones[(i + (3 * (page - 1)))].photos[0]);
+                    pics[i].Load(@"photos\" + phones[elementIndex(i)].photos[0]);
                     pics[i].SizeMode = PictureBoxSizeMode.StretchImage;
-                    text[i].Text = getDsc(phones[(i + (3 * (page - 1)))]);
+                    text[i].Text = getDsc(phones[elementIndex(i)]);
                 }
                 else
                 {
@@ -385,6 +385,36 @@ namespace FindPhone
             pagesUpdate();
             conn.close();
         }
+        int elementIndex(int element)
+        {
+            return (element + (3 * (page - 1)));
+        }
+        void openGalery(int index)
+        {
+            if (pics[index].ImageLocation!=@"photos\default.jpg")
+            {
+                Galery galery = new Galery(phones[elementIndex(index)].photos);
+                galery.Text = phones[elementIndex(index)].model.name;
+                galery.Show();
+            }
+            else 
+                MessageBox.Show("This phone has no photos");
+        }
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            openGalery(0);
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            openGalery(1);
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            openGalery(2);
+        }
+
         private void searchBtn_Click(object sender, EventArgs e)
         {
             find();
