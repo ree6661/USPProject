@@ -144,7 +144,6 @@ namespace FindPhone
                 {
                     pics[i].Visible = true;
                     text[i].Visible = true;
-                    //MessageBox.Show(@"photos\" + phones[(i + (3 * (page - 1)))].photos[0]+"\ti= "+i.ToString()+"\ti2= "+(i + (3 * (page - 1))).ToString(), "ГРЕШКА",MessageBoxButtons.OK);
                     pics[i].Load(@"photos\" + phones[(i + (3 * (page - 1)))].photos[0]);
                     pics[i].SizeMode = PictureBoxSizeMode.StretchImage;
                     text[i].Text = getDsc(phones[(i + (3 * (page - 1)))]);
@@ -311,8 +310,6 @@ namespace FindPhone
 
                 phone.model.ROMId = reader.GetUInt32("idСторидж");
                 phone.model.name = reader.GetString("Модел");
-                /*MessageBox.Show(phone.model.name +"\t"+ phone.model.modelId.ToString(), 
-                                "addet", MessageBoxButtons.OK);*/
                 try
                 {
                     phone.model.description = reader.GetString("Описание");
@@ -321,8 +318,6 @@ namespace FindPhone
                 {
                     phone.model.description = "N/A";
                 }
-                /*MessageBox.Show(phone.model.description,
-            "dc", MessageBoxButtons.OK);*/
                 try { phone.Brand = reader.GetString("Марки"); }
                 catch { phone.Brand = "N/A"; }
                 try { phone.CPU = reader.GetString("Процесор"); }
