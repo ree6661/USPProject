@@ -9,6 +9,7 @@ namespace FindPhone
 {
     public partial class Form1 : Form
     {
+        public const int elementsBr = 3;
         UInt16 page, pages;
         public List<PictureBox> pics = new List<PictureBox>();
         public Form1()
@@ -28,7 +29,7 @@ namespace FindPhone
         }
         public void pagesUpdate()
         {
-            pages = (UInt16)(phones.Count / 3 + Convert.ToUInt16(phones.Count % 3 != 0));
+            pages = (UInt16)(phones.Count / elementsBr + Convert.ToUInt16(phones.Count % 3 != elementsBr));
             pages += Convert.ToUInt16(pages == 0);
             page = 1;
             previousBtn.Enabled = false;
@@ -233,7 +234,6 @@ namespace FindPhone
         {
             if (page < pages)
             {
-
                 ++page;
                 nextBtn.Enabled = page < pages;
                 previousBtn.Enabled = true;

@@ -14,7 +14,7 @@ namespace FindPhone
         string server = "localhost";
         string dataBase = "phonedb";
         string username = "root";
-        string password = "ROOT";
+        string password = "root";
         string constring = "";
 
         public MySqlConnection conn;
